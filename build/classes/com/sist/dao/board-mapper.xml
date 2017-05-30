@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sist.dao.board-mapper">
+	<insert id="boardInsert" parameterType="Board">
+		<selectKey keyProperty="no" resultType="int" order="BEFORE">
+			SELECT NVL(MAX(no)+1, 1) as no FROM mvcBoard
+		</selectKey>
+		INSERT INTO mvcBoard(no, name, subject, content, pwd, group_id)
+		VALUES(#{no}, #{name}, #{subject}, #{content}, #{pwd}, (SELECT NVL(MAX(group_id)+1,1) FROM mvcBoard))
+		<!-- 시퀀스는 한번만 쓸 수 있기에 group_id는 서브쿼리로 올려줬다.
+			#{no} => ?로 바뀌어서 sql문장을 하나 실행된다 하나하나 pstmt.setInt(1, board.getNo());식으로 다 처리하고 있다.
+		 -->
+	</insert>
+	<!-- 
+	단일데이터
+	다중데이터 : Board, Map(VO에 없는 변수가 있으면 Map을)
+					BETWEEN 1 AND 10
+								11		   20 아예 sql자체에서 paging을 처리하려고 한다.
+								Board안에는 start, end가 없으니 Map으로
+	 -->
+	<select id="boardListData" resultType="Board" parameterType="java.util.Map">
+		SELECT no, subject, name, regdate, hit, group_tab, num
+		FROM	(SELECT no, subject, name, regdate, hit, group_tab, rownum as num
+		FROM (SELECT no, subject, name, regdate, hit, group_tab FROM mvcBoard ORDER BY group_id DESC, group_step ASC))
+		WHERE num BETWEEN #{start} AND #{end}
+	</select>
+</mapper>

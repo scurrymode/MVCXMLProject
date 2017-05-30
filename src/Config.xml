@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-config.dtd"> 
+<!-- 
+	configuration(a?, b*, c+, d, (e|k))
+	?는 써도되고 안써도됨 * 써도되고 안써도되는데 여러번 가능, + 최소 한번은 써야 함, 아무표시없으면 한번, 꼭 써야함, | 둘중선택
+ -->
+ 
+ <configuration>
+	 <properties resource="db.properties"/>
+	 <typeAliases>
+	 	<typeAlias type="com.sist.dao.BoardVO" alias="Board"/>
+	 </typeAliases>
+	 <environments default="development">
+	 	<environment id="development">
+	 		<transactionManager type="JDBC"/>
+	 		<!-- commit과 rollback을 어떻게 처리할지
+	 			1. JDBC(자바에 맡기기, 자바의 rollback()과 commit()을 쓰겠다는 소리)
+	 			2. MANAGED(스스로 하겠다)
+	 			transaction : 일괄처리
+	 		 -->
+	 		<dataSource type="POOLED">
+	 		<!-- dataSource에 넣을 수 있는 타입 쓸때마다 접속할지(UNPOOLED) Connection Pool인지(POOLED), JNDI인지 -->
+	 		<property name="driver" value="${driver}"/>
+	 		<property name="url" value="${url}"/>
+	 		<property name="username" value="${username}"/>
+	 		<property name="password" value="${password}"/>
+	 		</dataSource>
+	 	</environment>
+	 </environments>
+	 <mappers>
+	 	<mapper resource="com/sist/dao/board-mapper.xml"/>
+	 </mappers>
+ </configuration>
