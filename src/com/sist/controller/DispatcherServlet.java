@@ -32,16 +32,21 @@ public class DispatcherServlet extends HttpServlet {
 			cmd = cmd.substring(request.getContextPath().length()+1, cmd.lastIndexOf("."));
 			System.out.println(cmd);
 			
-			//요청처리 클래스 찾기
+			//요청처리 클래스 찾기 (XMLParser가 만든 map에 id만 넣으면 obj를 주니깐)
 			Model model = hm.getBean(cmd);
 			
-			//요청에 대한 처리 => 결과값은 request에 담는다
+			//요청에 대한 처리(로직관리하는 model에게 일시키기) => 결과값은 request에 담는다
 			String jsp = model.handlerRequest(request, response);
 			
+			
 			//결과가 사라지면 안되니깐 forward
+			String ext=jsp.substring(jsp.lastIndexOf(".")+1); //확장자만 꺼내기
+			if(ext.equals("jsp")){
 			RequestDispatcher rd = request.getRequestDispatcher(jsp);
 			rd.forward(request, response);	
-			
+			}else{
+				response.sendRedirect(jsp);
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}

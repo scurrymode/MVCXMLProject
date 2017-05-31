@@ -2,6 +2,8 @@ package com.sist.model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.text.SimpleDateFormat;
 import java.util.*;
 import com.sist.dao.*;
 
@@ -22,7 +24,15 @@ public class ListModel implements Model {
 		
 		BoardDAO dao = new BoardDAO();
 		List<BoardVO> list = dao.boardListData(map);
+		
+		
+		int totalpage=dao.boardTotalPage();
+		
 		req.setAttribute("list", list);
+		req.setAttribute("curpage", curpage);
+		req.setAttribute("totalpage", totalpage);
+		req.setAttribute("today", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+		
 		
 		return "/board/list.jsp";
 	}

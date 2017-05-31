@@ -31,12 +31,36 @@
 			<c:forEach var="vo" items="${list}">
 				<tr class="dataTr">
 					<td width=10% align=center>${vo.no}</td>
-					<td width=45%>${vo.subject }</td>
+					<td width=45%>
+					<!-- 답변이면 답변 표시 -->
+					<c:if test="${vo.group_tab>0 }">
+						<c:forEach var="i" begin="1" end="${vo.group_tab }">
+						&nbsp;&nbsp;
+						</c:forEach>
+						<img src="image/icon_reply.gif">
+					</c:if>
+					<a href="content.do?no=${vo.no }&page=${curpage}">${vo.subject }</a> <!-- 상세보기 -->
+					<!-- 뉴표시 -->
+					<c:if test="${today==vo.day }">
+						<sup><img src="image/new.gif"></sup> <!-- 위로 올릴라고 -->
+					</c:if>
+					</td>
 					<td width=15% align=center>${vo.name}</td>
 					<td width=20% align=center><fmt:formatDate value="${vo.regdate }" pattern="yyyy-MM-dd" /></td>
 					<td width=10% align=center>${vo.hit}</td>
 				</tr>
 			</c:forEach>
+		</table>
+		<table border=0 width=700>
+			<tr>
+				<td align=right>
+					<a href="list.do?page=${curpage>1?curpage-1:curpage}">
+					<img src="image/prev_a.gif"></a>&nbsp;
+					<a href="list.do?page=${curpage<totalpage?curpage+1:curpage}">
+					<img src="image/next_a.gif"></a>&nbsp;&nbsp;
+					${curpage} page / ${totalpage } pages
+				</td>
+			</tr>
 		</table>
 	</center>
 </body>

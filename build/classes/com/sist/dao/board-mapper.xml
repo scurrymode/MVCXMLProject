@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sist.dao.board-mapper">
+	<!-- 데이터 추가 -->
 	<insert id="boardInsert" parameterType="Board">
 		<selectKey keyProperty="no" resultType="int" order="BEFORE">
 			SELECT NVL(MAX(no)+1, 1) as no FROM mvcBoard
@@ -19,9 +20,51 @@
 								Board안에는 start, end가 없으니 Map으로
 	 -->
 	<select id="boardListData" resultType="Board" parameterType="java.util.Map">
-		SELECT no, subject, name, regdate, hit, group_tab, num
+		SELECT no, subject, name, regdate, TO_CHAR(regdate, 'YYYY-MM-DD') as day, hit, group_tab, num
 		FROM	(SELECT no, subject, name, regdate, hit, group_tab, rownum as num
 		FROM (SELECT no, subject, name, regdate, hit, group_tab FROM mvcBoard ORDER BY group_id DESC, group_step ASC))
 		WHERE num BETWEEN #{start} AND #{end}
 	</select>
+	<!-- 
+		오라클 
+		- 숫자 함수
+			1. ROUND() : 반올림 ROUND(123.56, 1) -> 123.6 ROUND(123.56, 0) ->124
+			2. TRUNC() : 버림
+			3. MOD() : 나머지
+			4. CEIL() : 올림
+		- 문자 함수
+			1. SUBSTR() : 문자 자를때
+    		2. INSTR() : 문자 위치 찾을때
+    		3. RPAD
+		- 변환 함수
+			1. TO_CHAR : 시간 출력(등록된 시간 출력)
+		- 날짜 함수
+			1. SYSDATE : 현재시간
+    		2. MONTHS_BETWEEN
+    		3. ADD_MONTH
+		- 기타 함수
+			1. DECODE
+    		2. CASE
+    		3. NVL : 널이면 특정값 넣어주기 NVL(comm, 0)
+		- 집합 함수
+			1. COUNT
+    		2. MAX
+	 -->
+	 <!-- 총페이지 구하기 -->
+	<select id="boardTotalPage" resultType="int">
+		SELECT CEIL(COUNT(*)/10) FROM mvcBoard
+	</select>
+	<!-- 내용 보기(조회수 증가, 데이터 읽기) -->
+	<update id="boardHitIncrement" parameterType="int">
+		UPDATE mvcBoard SET
+		hit = hit+1
+		WHERE no=#{no}
+	</update>
+	<select id="boardContentData" parameterType="int" resultType="Board">
+		SELECT no, name, subject, content, regdate, To_CHAR(regdate, 'YYYY-MM-DD') as day, hit
+		FROM mvcBoard
+		WHERE no=#{no}
+	</select>
+	
+	
 </mapper>
