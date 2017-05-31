@@ -54,8 +54,8 @@ $(function(){
 		<table id="table_content" width=500>
 			<tr>
 				<td align=right>
-					<a href="reply.do">답변</a>&nbsp;
-					<a href="update.do">수정</a>&nbsp;
+					<a href="reply.do?no=${vo.no}&page=${page }">답변</a>&nbsp;
+					<a href="update.do?no=${vo.no}&page=${page }">수정</a>&nbsp;
 					<a href="#" id="a_del">삭제</a>&nbsp;
 					<a href="list.do?page=${page }">목록</a>
 				</td>

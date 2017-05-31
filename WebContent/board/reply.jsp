@@ -16,6 +16,8 @@
 				<td width=15%>¿Ã∏ß</td>
 				<td width=85%>
 					<input type="text" name="name" size="12">
+					<input type="hidden" name="pno" value="${no }">
+					<input type="hidden" name="page" value="${page }">
 				</td> 
 			</tr>
 			<tr>

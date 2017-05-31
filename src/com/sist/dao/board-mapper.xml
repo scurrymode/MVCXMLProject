@@ -4,55 +4,36 @@
 	<!-- 데이터 추가 -->
 	<insert id="boardInsert" parameterType="Board">
 		<selectKey keyProperty="no" resultType="int" order="BEFORE">
-			SELECT NVL(MAX(no)+1, 1) as no FROM mvcBoard
+			SELECT
+			NVL(MAX(no)+1, 1) as no FROM mvcBoard
 		</selectKey>
 		INSERT INTO mvcBoard(no, name, subject, content, pwd, group_id)
-		VALUES(#{no}, #{name}, #{subject}, #{content}, #{pwd}, (SELECT NVL(MAX(group_id)+1,1) FROM mvcBoard))
-		<!-- 시퀀스는 한번만 쓸 수 있기에 group_id는 서브쿼리로 올려줬다.
-			#{no} => ?로 바뀌어서 sql문장을 하나 실행된다 하나하나 pstmt.setInt(1, board.getNo());식으로 다 처리하고 있다.
-		 -->
+		VALUES(#{no}, #{name}, #{subject}, #{content}, #{pwd}, (SELECT
+		NVL(MAX(group_id)+1,1) FROM mvcBoard))
+		<!-- 시퀀스는 한번만 쓸 수 있기에 group_id는 서브쿼리로 올려줬다. #{no} => ?로 바뀌어서 sql문장을 하나 
+			실행된다 하나하나 pstmt.setInt(1, board.getNo());식으로 다 처리하고 있다. -->
 	</insert>
-	<!-- 
-	단일데이터
-	다중데이터 : Board, Map(VO에 없는 변수가 있으면 Map을)
-					BETWEEN 1 AND 10
-								11		   20 아예 sql자체에서 paging을 처리하려고 한다.
-								Board안에는 start, end가 없으니 Map으로
-	 -->
+	<!-- 단일데이터 다중데이터 : Board, Map(VO에 없는 변수가 있으면 Map을) BETWEEN 1 AND 10 11 20 
+		아예 sql자체에서 paging을 처리하려고 한다. Board안에는 start, end가 없으니 Map으로 -->
 	<select id="boardListData" resultType="Board" parameterType="java.util.Map">
-		SELECT no, subject, name, regdate, TO_CHAR(regdate, 'YYYY-MM-DD') as day, hit, group_tab, num
-		FROM	(SELECT no, subject, name, regdate, hit, group_tab, rownum as num
-		FROM (SELECT no, subject, name, regdate, hit, group_tab FROM mvcBoard ORDER BY group_id DESC, group_step ASC))
-		WHERE num BETWEEN #{start} AND #{end}
+		SELECT no, subject, name, regdate, TO_CHAR(regdate, 'YYYY-MM-DD') as
+		day, hit, group_tab, num
+		FROM (SELECT no, subject, name, regdate, hit,
+		group_tab, rownum as num
+		FROM (SELECT no, subject, name, regdate, hit,
+		group_tab FROM mvcBoard ORDER BY group_id DESC, group_step ASC))
+		WHERE
+		num BETWEEN #{start} AND #{end}
 	</select>
-	<!-- 
-		오라클 
-		- 숫자 함수
-			1. ROUND() : 반올림 ROUND(123.56, 1) -> 123.6 ROUND(123.56, 0) ->124
-			2. TRUNC() : 버림
-			3. MOD() : 나머지
-			4. CEIL() : 올림
-		- 문자 함수
-			1. SUBSTR() : 문자 자를때
-    		2. INSTR() : 문자 위치 찾을때
-    		3. RPAD
-		- 변환 함수
-			1. TO_CHAR : 시간 출력(등록된 시간 출력)
-		- 날짜 함수
-			1. SYSDATE : 현재시간
-    		2. MONTHS_BETWEEN
-    		3. ADD_MONTH
-		- 기타 함수
-			1. DECODE
-    		2. CASE
-    		3. NVL : 널이면 특정값 넣어주기 NVL(comm, 0)
-		- 집합 함수
-			1. COUNT
-    		2. MAX
-	 -->
-	 <!-- 총페이지 구하기 -->
+	<!-- 오라클 - 숫자 함수 1. ROUND() : 반올림 ROUND(123.56, 1) -> 123.6 ROUND(123.56, 
+		0) ->124 2. TRUNC() : 버림 3. MOD() : 나머지 4. CEIL() : 올림 - 문자 함수 1. SUBSTR() 
+		: 문자 자를때 2. INSTR() : 문자 위치 찾을때 3. RPAD - 변환 함수 1. TO_CHAR : 시간 출력(등록된 시간 
+		출력) - 날짜 함수 1. SYSDATE : 현재시간 2. MONTHS_BETWEEN 3. ADD_MONTH - 기타 함수 1. DECODE 
+		2. CASE 3. NVL : 널이면 특정값 넣어주기 NVL(comm, 0) - 집합 함수 1. COUNT 2. MAX -->
+	<!-- 총페이지 구하기 -->
 	<select id="boardTotalPage" resultType="int">
-		SELECT CEIL(COUNT(*)/10) FROM mvcBoard
+		SELECT CEIL(COUNT(*)/10)
+		FROM mvcBoard
 	</select>
 	<!-- 내용 보기(조회수 증가, 데이터 읽기) -->
 	<update id="boardHitIncrement" parameterType="int">
@@ -61,10 +42,62 @@
 		WHERE no=#{no}
 	</update>
 	<select id="boardContentData" parameterType="int" resultType="Board">
-		SELECT no, name, subject, content, regdate, To_CHAR(regdate, 'YYYY-MM-DD') as day, hit
+		SELECT no, name, subject, content, regdate, To_CHAR(regdate,
+		'YYYY-MM-DD') as day, hit
 		FROM mvcBoard
 		WHERE no=#{no}
 	</select>
+	<!-- 업데이트 페이지 보기 -->
+	<select id="boardUpdateData" parameterType="int" resultType="Board">
+		SELECT no, name, subject, content, regdate, To_CHAR(regdate,
+		'YYYY-MM-DD') as day, hit
+		FROM mvcBoard
+		WHERE no=#{no}
+	</select>
+	<!-- 수정하기 -->
+	<select id="boardGetPwd" parameterType="int" resultType="String">
+		SELECT pwd FROM mvcBoard
+		WHERE no=#{no}
+	</select>
+	<update id="boardUpdate" parameterType="Board">
+		UPDATE mvcBoard SET
+		name=#{name},subject=#{subject},
+		content=#{content}
+		WHERE no=#{no}
+	</update>
 	
-	
+	<!-- 답변 올리기 -->
+	<!-- 그룹정보 가져오기 -->
+	<select id="boardGroupInfoData" resultType="Board" parameterType="int">
+		SELECT group_id, group_step, group_tab
+		FROM mvcBoard
+		WHERE no=#{no}
+	</select>
+	<!--						gi	gs	gt
+		AAAA					1	0	0
+			=>BBBB			1	1	1
+				=>CCCC		1	2	2
+			=>DDDD			1	1	1 인데 이걸 맨 위로 올리기 위해 gs값이 0보다 큰놈들 값이 다 1씩 올려줘서 내가 최위로
+	 -->
+	<update id="boardGroupStepIncrement" parameterType="Board">
+		UPDATE mvcBoard SET
+		group_step=group_step+1
+		WHERE group_id=#{group_id} AND group_step>#{group_step}
+	</update>
+	<insert id="boardReplyInsert" parameterType="Board">
+		<selectKey keyProperty="no" resultType="int" order="BEFORE">
+			SELECT
+			NVL(MAX(no)+1, 1) as no FROM mvcBoard
+		</selectKey>
+		INSERT INTO mvcBoard(no, name, subject, content, pwd, group_id, group_step, group_tab, root)
+		VALUES(#{no}, #{name}, #{subject}, #{content}, #{pwd}, #{group_id}, #{group_step}, #{group_tab}, #{root})
+		<!-- 시퀀스는 한번만 쓸 수 있기에 group_id는 서브쿼리로 올려줬다. #{no} => ?로 바뀌어서 sql문장을 하나 
+			실행된다 하나하나 pstmt.setInt(1, board.getNo());식으로 다 처리하고 있다. -->
+	</insert>
+	<update id="baordDepthIncrement" parameterType="int">
+		UPDATE mvcBOARD SET
+		depth=depth+1
+		WHERE no=#{no}
+	</update>
+
 </mapper>

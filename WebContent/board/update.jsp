@@ -15,19 +15,21 @@
 			<tr>
 				<td width=15%>이름</td>
 				<td width=85%>
-					<input type="text" name="name" size="12">
+					<input type="text" name="name" size="12" value="${vo.name }">
+					<input type="hidden" name="no" value="${vo.no }">
+					<input type="hidden" name="page" value="${page }">
 				</td> 
 			</tr>
 			<tr>
 				<td width=15%>제목</td>
 				<td width=85%>
-					<input type="text" name="subject" size="50">
+					<input type="text" name="subject" size="50" value="${vo.subject }">
 				</td> 
 			</tr>
 			<tr>
 				<td width=15%>내용</td>
 				<td width=85%>
-					<textarea rows="10" cols="55" name="content"></textarea>
+					<textarea rows="10" cols="55" name="content">${vo.content }</textarea>
 				</td> 
 			</tr>
 			<tr>

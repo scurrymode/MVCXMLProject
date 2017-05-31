@@ -4,4 +4,8 @@
 	<bean id="content" class="com.sist.model.ContentModel"/>
 	<bean id="insert" class="com.sist.model.InsertModel"/>
 	<bean id="insert_ok" class="com.sist.model.InsertOkModel"/>
+	<bean id="update" class="com.sist.model.UpdateModel"/>
+	<bean id="update_ok" class="com.sist.model.UpdateOkModel"/>
+	<bean id="reply" class="com.sist.model.ReplyModel"/>
+	<bean id="reply_ok" class="com.sist.model.ReplyOkModel"/>
 </beans>
