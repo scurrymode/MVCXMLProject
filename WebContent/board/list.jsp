@@ -39,7 +39,12 @@
 						</c:forEach>
 						<img src="image/icon_reply.gif">
 					</c:if>
+					<c:if test="${vo.subject!=msg }">
 					<a href="content.do?no=${vo.no }&page=${curpage}">${vo.subject }</a> <!-- 상세보기 -->
+					</c:if>
+					<c:if test="${vo.subject==msg }">
+					<span style="color:gray">${vo.subject }</span>
+					</c:if>
 					<!-- 뉴표시 -->
 					<c:if test="${today==vo.day }">
 						<sup><img src="image/new.gif"></sup> <!-- 위로 올릴라고 -->
@@ -53,6 +58,19 @@
 		</table>
 		<table border=0 width=700>
 			<tr>
+			<!-- 찾기 -->
+				<td align=left>
+				<form method="post" action="find.do">
+					Search:<select name="fs"><!-- 컬럼명 -->
+					<option value="name">이름</option>
+					<option value="subject">제목</option>
+					<option value="content">내용</option>
+					</select>
+					<input type="text" name="ss" size=10><!-- 찾는 값 -->
+					<input type="submit" value="검색">
+					</form>
+				</td>
+				<!-- 현재페이지랑 업다운 -->
 				<td align=right>
 					<a href="list.do?page=${curpage>1?curpage-1:curpage}">
 					<img src="image/prev_a.gif"></a>&nbsp;

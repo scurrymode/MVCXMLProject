@@ -151,7 +151,47 @@ public class BoardDAO {
 	}
 	
 	//삭제하기
+	public static boolean boardDelete(int no, String pwd){
+		boolean bCheck=false;
+		SqlSession session =null;
+		try{
+			//비밀번호 검색
+			//depth검색 => delete or update
+			//depth 감소
+			session=ssf.openSession();
+			String db_pwd=session.selectOne("boardGetPwd", no);
+			if(db_pwd.equals(pwd)){
+				bCheck=true;
+				BoardVO vo = session.selectOne("boardGetDepth", no);
+				if(vo.getDepth()==0){
+					session.delete("boardDelete", no);
+				}else{
+					session.update("boardSubjectUpdate", no);
+				}
+				session.update("boardDepthDecrement", vo.getRoot());
+			}
+			session.commit();
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+		}finally{
+			session.close();
+		}
+		return bCheck;
+	}
 	
 	//찾기
+	public static List<BoardVO> boardFindData(Map map){
+		List<BoardVO> list = new ArrayList<BoardVO>();
+		SqlSession session =null;
+		try{
+			session=ssf.openSession();
+			list = session.selectList("boardFindData", map);
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+		}finally{
+			session.close();
+		}
+		return list;
+	}
 
 }

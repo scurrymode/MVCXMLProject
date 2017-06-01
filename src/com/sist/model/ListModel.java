@@ -27,7 +27,7 @@ public class ListModel implements Model {
 		
 		
 		int totalpage=dao.boardTotalPage();
-		
+		req.setAttribute("msg", "관리자가 삭제한 게시물입니다");//삭제한건 링크가 안걸리게 해주려는 키
 		req.setAttribute("list", list);
 		req.setAttribute("curpage", curpage);
 		req.setAttribute("totalpage", totalpage);

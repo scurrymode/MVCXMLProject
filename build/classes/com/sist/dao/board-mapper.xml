@@ -99,5 +99,35 @@
 		depth=depth+1
 		WHERE no=#{no}
 	</update>
+	<!-- 삭제 -->
+	<!-- depth가 0이여야 바로 삭제 가능, 그리고 root의 depth 하나를 줄여줘야됨 -->
+	<select id="boardGetDepth" resultType="Board" parameterType="int">
+		SELECT depth, root FROM mvcBoard
+		WHERE no=#{no}	
+	</select>
+	<!-- depth == 0 delete
+		depth != 0 update 	 -->
+	<delete id="boardDelete" parameterType="int">
+		DELETE FROM mvcBoard
+		WHERE no=#{no}
+	</delete>
+	<update id="boardSubjectUpdate" parameterType="int">
+		UPDATE mvcBoard SET
+		subject='관리자가 삭제한 게시물입니다',
+		content='관리자가 삭제한 게시물입니다'
+		WHERE no=#{no}
+	</update>
+	<update id="boardDepthDecrement" parameterType="int">
+		UPDATE mvcBoard SET
+		depth=depth-1
+		WHERE no=#{no}
+	</update>
+	<!-- 찾기 -->
+	<select id="boardFindData" parameterType="java.util.Map" resultType="Board">
+		SELECT no, subject, name, regdate, hit
+		FROM mvcBoard
+		WHERE ${fs} LIKE '%'||#{ss}||'%'
+	</select>
+	
 
 </mapper>
